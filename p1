@@ -1,0 +1,158 @@
+Program Arbori;
+Type
+  Tree=^Nod;
+  Nod=Record
+  Left:Tree;
+  Right:Tree;
+  Inf:Record
+  num:string;
+  data_n: record
+zi:byte;
+luna:byte;
+an:integer;
+end;
+  Suma:real;
+  Abonament:string;
+  Nume:string;
+  Prenumele:string;
+  Adresa:string;
+ end;
+ end;
+Procedure parcurge(Ab:Tree);
+begin
+  If Ab<>nil then
+  begin
+  Writeln(Ab^.Inf.num);
+  Writeln(Ab^.Inf.Nume);
+  Writeln(Ab^.Inf.Prenumele);
+  Writeln(Ab^.Inf.data_n.zi);
+  Writeln(Ab^.Inf.data_n.luna);
+  Writeln(Ab^.Inf.data_n.an);
+  Writeln(Ab^.Inf.Abonament);
+  Writeln(Ab^.Inf.Suma);
+  Writeln(Ab^.Inf.Adresa);
+  parcurge(Ab^.Left);
+  parcurge(Ab^.Right);
+  end;
+  end;
+
+
+Procedure cautare_sump(Ab:Tree; key:real);
+begin
+  If Ab<>nil then
+  begin
+  if Ab^.Inf.Suma = key then begin
+  Writeln(Ab^.Inf.num);
+  Writeln(Ab^.Inf.Nume);
+  Writeln(Ab^.Inf.Prenumele);
+  Writeln(Ab^.Inf.Abonament);
+  Writeln(Ab^.Inf.Suma);
+  Writeln(Ab^.Inf.Adresa);
+  cautare_sump(Ab^.Left,key);
+  cautare_sump(Ab^.Right,key);
+  end
+  else writeln ('N-am gasit');
+  end;
+end;
+Procedure poisc_dn(Ab:Tree);
+begin
+  If Ab<>nil then
+  begin
+  if ((Ab^.Inf.data_n.zi=2) and (Ab^.Inf.data_n.luna=4)) then 
+  begin
+  Writeln(Ab^.Inf.num);
+  Writeln(Ab^.Inf.Nume);
+  Writeln(Ab^.Inf.Prenumele);
+  Writeln(Ab^.Inf.data_n.an);
+  Writeln(Ab^.Inf.Abonament);
+  Writeln(Ab^.Inf.Suma);
+  Writeln(Ab^.Inf.Adresa);
+  poisc_dn(Ab^.Left);
+  poisc_dn(Ab^.Right);
+  end
+  end;
+  end;
+  Procedure poisc_adresa(Ab:Tree;keyad:string);
+begin
+  If Ab<>nil then
+  begin
+  
+  if (Ab^.Inf.Adresa=keyad) then
+  begin
+  Writeln(Ab^.Inf.num);
+  Writeln(Ab^.Inf.Nume);
+  Writeln(Ab^.Inf.Prenumele);
+  Writeln(Ab^.Inf.Abonament);
+  Writeln(Ab^.Inf.Suma);
+  poisc_adresa(Ab^.Left,keyad);
+  poisc_adresa(Ab^.Right,keyad);
+  end
+  else writeln ('nam gasit');
+  end;
+  end;
+  
+   Procedure sum_max(Ab:Tree; var max:real; var den:string);
+begin
+  If Ab<>nil then
+  begin
+  if (Ab^.Inf.Suma >= max) then begin
+  max:=Ab^.Inf.Suma;
+  den:=Ab^.Inf.Abonament;
+  end;
+  sum_max(Ab^.Left,max,den);
+  sum_max(Ab^.Right,max,den);
+  end;
+  end;
+Procedure Creare_ar(var Ab:Tree);
+var N:string;
+begin
+  Readln(N);
+  If N='0' then
+  Ab:= nil
+  else
+  begin
+  new(Ab);
+  Ab^.Inf.num:=N;
+  writeln('nume');
+  readln(Ab^.Inf.Nume);
+  writeln('prenume');
+  readln(Ab^.Inf.Prenumele);
+  writeln('DN zi luna an');
+  readln(Ab^.Inf.data_n.zi);
+  readln(Ab^.Inf.data_n.luna);
+  readln(Ab^.Inf.data_n.an);
+  writeln('Adresa');
+  readln(Ab^.Inf.Adresa);
+  writeln('Abonament');
+  readln(Ab^.Inf.Abonament);
+  writeln('Suma');
+  readln(Ab^.Inf.Suma);
+  writeln('left part');
+  Creare_ar(Ab^.Left);
+  writeln('right part');
+  Creare_ar(Ab^.Right);
+  end;
+end;
+var
+Head:Tree;
+a,den:string;
+b,max, key:real;
+keyad:string;
+begin
+max:=0;
+den:='inexistent';
+Creare_ar(Head);
+parcurge(Head);
+writeln('introduceti summa contractului');
+readln (key);
+writeln('Oamenii cu pretul pachetului ', key,' sunt');
+cautare_sump(Head,key);
+
+poisc_dn(Head);
+write ('ce adresa cautati?');
+  readln(keyad);
+poisc_adresa(Head,keyad);
+sum_max(Head,max,den);
+writeln('Pachet cu summa', max,' maximala este ', den);
+end.
+   
