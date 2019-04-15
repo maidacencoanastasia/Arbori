@@ -1,0 +1,115 @@
+program Salon_de_frumusete_arbori_binari;
+
+type
+  Tree = ^Nod;
+  Nod = Record
+    Left: Tree;
+    Right: Tree;
+    Inf: Record
+      NP: string;
+      dn: record
+        zi: byte;
+        luna: byte;
+        an: integer;
+      end;
+      Card_s: string;
+      reducere: real;
+      usluga: string;
+      Cost: real;
+      Cost_cu_reducere: real;
+    end;
+  end;
+
+procedure Obhod(Ab: Tree);
+begin
+  if Ab <> nil then
+  begin
+    writeln('N.P : ', Ab^.Inf.NP);
+    write(Ab^.Inf.dn.zi, '/');
+    write(Ab^.Inf.dn.luna, '/');
+    writeln(Ab^.Inf.dn.an);
+    writeln('Card : ', Ab^.Inf.Card_s);
+    writeln(Ab^.Inf.reducere, '%');
+    writeln('Comanda- ', Ab^.Inf.usluga);
+    writeln('Pret: ', Ab^.Inf.Cost, ' lei');
+    writeln('Total catre plata= ', Ab^.Inf.Cost_cu_reducere, ' lei');
+    obhod(Ab^.Left);
+    obhod(Ab^.Right);
+  end;
+end;
+
+procedure Crearea(var Ab: Tree);
+var
+  k: char;
+begin
+  writeln('for exit tab 0');
+  Readln(k);
+  if k = '0' then
+    Ab := nil
+  else
+  begin
+    new(Ab);
+    writeln('Introduceti Numele Prenumele');
+    readln(Ab^.Inf.NP);
+    writeln('DN zi luna an');
+    read(Ab^.Inf.dn.zi);
+    read(Ab^.Inf.dn.luna);
+    readln(Ab^.Inf.dn.an);
+    writeln('Introduceti Nr de card discont pentru reduceri');
+    readln(Ab^.Inf.Card_s);
+    writeln('Introduceti Valoarea Reducerii');
+    readln(Ab^.Inf.reducere);
+    writeln('Introduceti Nr ultimei comenzii active sau denumirea');
+    readln(Ab^.Inf.usluga);
+    writeln('Introduceti Costul ultimei comenzii fara reducere');
+    readln(Ab^.Inf.Cost);
+    Ab^.Inf.Cost_cu_reducere := Ab^.Inf.Cost - (Ab^.Inf.Cost * Ab^.Inf.reducere) / 100;
+    writeln('left part');
+    Crearea(Ab^.Left);
+    writeln('right part');
+    Crearea(Ab^.Right);
+  end;
+end;
+
+procedure Poisc_dn(Ab: Tree; d: byte; m: byte);
+begin
+  if Ab <> nil then
+  begin
+    if ((Ab^.Inf.dn.zi = d) and (Ab^.Inf.dn.luna = m)) then 
+    begin
+      writeln(Ab^.Inf.NP);
+      writeln(Ab^.Inf.dn.an);
+      writeln(Ab^.Inf.Card_s);
+      poisc_dn(Ab^.Left, d, m);
+      poisc_dn(Ab^.Right, d, m);
+    end
+    else writeln('Nu-s clienti cu asa data');
+  end;
+end;
+
+function Prib(Ab: Tree): real;
+begin
+  if Ab <> nil then
+  begin
+    Prib := Ab^.Inf.Cost_cu_reducere + Prib(Ab^.Left) + Prib(Ab^.Right);
+  end;
+end;
+
+var
+  Head: Tree;
+  data: record
+    d, m: byte;
+  
+  end;
+
+begin
+  
+  Crearea(Head);
+  writeln('Lista clientilor:');
+  Obhod(Head);
+  writeln('Introduceti data: day and month ');
+  readln(data.d, data.m);
+  Poisc_dn(Head, data.d, data.m);
+  writeln(Prib(Head), ' - Veniture care are salon de la comenzile inregistrate');
+  
+end.
