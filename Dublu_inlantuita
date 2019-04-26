@@ -1,48 +1,63 @@
-program Project1;
- 
+program Project_Dublu_inlantuita;
+
 type
   (*Типы для описания списка.*)
- 
+  
   (*Тип данных - определяет данные, которые будет содержать каждый элемент списка.*)
   TData = Integer;
   (*Тип, описывающий элемент списка.*)
   TPElem = ^TElem;
   TElem = record
-    Data : TData;
-    PNext : TPElem;
-    PPrev : TPElem;
+    Data: TData;
+    PNext: TPElem;
+    PPrev: TPElem;
   end;
   (*Тип, описывающий список.*)
   TList = record
-    PFirst : TPElem;
-    PLast : TPElem;
+    PFirst: TPElem;
+    PLast: TPElem;
   end;
- 
+
 (*Процедуры для работы со списком.*)
- 
-(*Удаление всего списка из памяти и инициализация.*)
-procedure ListFree(var aList : TList);
+procedure Afis(var aList: TList; aPElem: TPElem);
 var
-  PNext, PDel : TPElem;
+  i: integer;
+begin
+  aPElem := aList.PFirst;
+  i := 0;
+  while aPElem <> nil do 
+  begin
+    Inc(i);
+    if i > 1 then Write(', ');
+    Write(aPElem^.Data);
+    aPElem := aPElem^.PNext;
+  end;
+  Writeln;
+end;
+(*Удаление всего списка из памяти и инициализация.*)
+procedure ListFree(var aList: TList);
+var
+  PNext, PDel: TPElem;
 begin
   if aList.PFirst = nil then Exit;
- 
+  
   PNext := aList.PFirst;
-  while PNext <> nil do begin
+  while PNext <> nil do 
+  begin
     PDel := PNext;
     PNext := PNext^.PNext;
     Dispose(PDel);
   end;
- 
+  
   aList.PFirst := nil;
   aList.PLast := nil;
 end;
- 
+
 (*Добавление элемента в начало списка.*)
-procedure AddF(var aList : TList; const aPElem : TPElem);
+procedure AddF(var aList: TList; const aPElem: TPElem);
 begin
   if aPElem = nil then Exit;
- 
+  
   aPElem^.PNext := nil;
   aPElem^.PPrev := nil;
   if aList.PFirst = nil then begin
@@ -54,12 +69,12 @@ begin
     aList.PFirst := aPElem;
   end;
 end;
- 
+
 (*Добавление элемента в конец списка.*)
-procedure AddL(var aList : TList; const aPElem : TPElem);
+procedure AddL(var aList: TList; const aPElem: TPElem);
 begin
   if aPElem = nil then Exit;
- 
+  
   aPElem^.PNext := nil;
   aPElem^.PPrev := nil;
   if aList.PFirst = nil then begin
@@ -71,12 +86,12 @@ begin
     aList.PLast := aPElem;
   end;
 end;
- 
+
 (*Вставка перед элементом.*)
-procedure InsB(var aList : TList; const aPBase, aPElem : TPElem);
+procedure InsB(var aList: TList; const aPBase, aPElem: TPElem);
 begin
   if aPElem = nil then Exit;
- 
+  
   if (aList.PFirst = nil) or (aPBase = nil) or (aPBase = aList.PFirst) then begin
     AddF(aList, aPElem);
   end else begin
@@ -86,12 +101,12 @@ begin
     aPElem^.PPrev^.PNext := aPElem;
   end;
 end;
- 
+
 (*Вставка после элемента.*)
-procedure InsA(var aList : TList; const aPBase, aPElem : TPElem);
+procedure InsA(var aList: TList; const aPBase, aPElem: TPElem);
 begin
   if aPElem = nil then Exit;
- 
+  
   if (aList.PLast = nil) or (aPBase = nil) or (aPBase = aList.PLast) then begin
     AddL(aList, aPElem);
   end else begin
@@ -101,20 +116,21 @@ begin
     aPElem^.PNext^.PPrev := aPElem;
   end;
 end;
- 
+
 (*Возвращение указателя на элемент по его номеру в списке.
 Если элемента с заданным номером не существует, то возвращается nil.*)
-function GetByNum(const aList : TList; const aI : Longword) : TPElem;
+function GetByNum(const aList: TList; const aI: Longword): TPElem;
 var
-  i : Longword;
-  PNext : TPElem;
-  Res : TPElem;
+  i: Longword;
+  PNext: TPElem;
+  Res: TPElem;
 begin
   Res := nil;
- 
+  
   i := 1;
   PNext := aList.PFirst;
-  while (i <= aI) and (PNext <> nil) do begin
+  while (i <= aI) and (PNext <> nil) do 
+  begin
     if i = aI then begin
       Res := PNext;
       Break;
@@ -122,36 +138,37 @@ begin
     Inc(i);
     PNext := PNext^.PNext;
   end;
- 
+  
   GetByNum := Res;
 end;
- 
+
 (*Поиск элемента в списке по данным.
 Если элемент не найден, то возвращается nil.*)
-function FindElem(const aList : TList; const aData : TData) : TPElem;
+function FindElem(const aList: TList; const aData: TData): TPElem;
 var
-  PNext, Res : TPElem;
+  PNext, Res: TPElem;
 begin
   Res := nil;
- 
+  
   PNext := aList.PFirst;
-  while PNext <> nil do begin
+  while PNext <> nil do 
+  begin
     if PNext^.Data = aData then begin
       Res := PNext;
       Break;
     end;
     PNext := PNext^.PNext;
   end;
- 
+  
   FindElem := Res;
 end;
- 
+
 (*Удаление элемента по указателю на него.*)
-function DelByRef(var aList : TList; var aPElem : TPElem) : Boolean;
+function DelByRef(var aList: TList; var aPElem: TPElem): Boolean;
 begin
   DelByRef := False;
   if aPElem = nil then Exit;
- 
+  
   if aPElem = aList.PFirst then begin
     aList.PFirst := aPElem^.PNext;
     if aList.PFirst = nil then
@@ -170,157 +187,120 @@ begin
     aPElem^.PPrev^.PNext := aPElem^.PNext;
     aPElem^.PNext^.PPrev := aPElem^.PPrev;
   end;
- 
+  
   Dispose(aPElem);
   aPElem := nil;
   DelByRef := True;
 end;
- 
+
 (*Удаление элемента по его номеру.*)
-function DelByNum(var aList : TList; const aI : Longword) : Boolean;
+function DelByNum(var aList: TList; const aI: Longword): Boolean;
 var
-  PElem : TPElem;
+  PElem: TPElem;
 begin
   PElem := GetByNum(aList, aI);
   DelByNum := DelByRef(aList, PElem);
 end;
- 
+
 var
-  List : TList;
-  PElem, PElemB : TPElem;
-  i : Integer;
+  List: TList;
+  PElem, PElemB: TPElem;
+  i, p: Integer;
+
 begin
   //Инициализация списка.
   List.PFirst := nil;
   List.PLast := nil;
- 
+  
   //Создаём несколько элементов и помещаем их в список
   //через процедуру добавления в конец.
-  for i := 1 to 3 do begin
+  writeln('Introduceti date initiale');
+  for i := 1 to 3 do 
+  begin
     New(PElem);
-    PElem^.Data := i;
+    read(PElem^.Data);
     AddL(List, PElem);
   end;
- 
+  
   //Показываем весь список.
   Writeln('Исходный список:');
-  PElem := List.PFirst;
-  i := 0;
-  while PElem <> nil do begin
-    Inc(i);
-    if i > 1 then Write(', ');
-    Write(PElem^.Data);
-    PElem := PElem^.PNext;
-  end;
-  Writeln;
- 
+  Afis(List, PElem);
+  
   //Создаём несколько элементов и помещаем их в список
   //через процедуру добавления в начало списка.
-  for i := 1 to 3 do begin
+  writeln('Introduceti la inceput');
+  for i := 1 to 3 do 
+  begin
     New(PElem);
-    PElem^.Data := i * -10;
+    read(PElem^.Data);
     AddF(List, PElem);
   end;
- 
+  
   //Показываем весь список.
   Writeln('Список после добавления 3-ёх элементов в начало:');
-  PElem := List.PFirst;
-  i := 0;
-  while PElem <> nil do begin
-    Inc(i);
-    if i > 1 then Write(', ');
-    Write(PElem^.Data);
-    PElem := PElem^.PNext;
-  end;
-  Writeln;
- 
+  Afis(List, PElem);
+  
   //Создаём несколько элементов и помещаем их в список
   //через процедуру добавления в конец списка.
-  for i := 1 to 3 do begin
+  writeln('Introduceti la sfirsit');
+  for i := 1 to 3 do
+  begin
     New(PElem);
-    PElem^.Data := i * 10;
+    read(PElem^.Data);
     AddL(List, PElem);
   end;
- 
+  
   //Показываем весь список.
   Writeln('Список после добавления 3-ёх элементов в конец:');
-  PElem := List.PFirst;
-  i := 0;
-  while PElem <> nil do begin
-    Inc(i);
-    if i > 1 then Write(', ');
-    Write(PElem^.Data);
-    PElem := PElem^.PNext;
-  end;
-  Writeln;
- 
+  Afis(List, PElem);
+  
   //Создаём несколько элементов и помещаем их в список
-  //после 6-го элемента.
- 
-  //Получаем ссылку на 6-ой элемент.
-  PElemB := GetByNum(List, 6);
- 
-  //Добавляем 3 элемента после 6-го элемента.
+  //после n-го элемента.
+  writeln('Introduceti numarul elementului p dupa care facem inserare');
+  readln(p);
+  //Получаем ссылку на n-ый элемент.
+  PElemB := GetByNum(List, p);
+  
+  //Добавляем 3 элемента после n-го элемента.
+  writeln('Introduceti element dupa- ', p);
   if PElemB <> nil then begin
-    for i := 1 to 3 do begin
+    for i := 1 to 3 do 
+    begin
       New(PElem);
-      PElem^.Data := i * 100;
+      read(PElem^.Data);
       InsA(List, PElemB, PElem);
     end;
   end;
- 
+  
   //Показываем весь список.
-  Writeln('Список после добавления 3-ёх элементов после 6-го элемента:');
-  PElem := List.PFirst;
-  i := 0;
-  while PElem <> nil do begin
-    Inc(i);
-    if i > 1 then Write(', ');
-    Write(PElem^.Data);
-    PElem := PElem^.PNext;
-  end;
-  Writeln;
- 
-  //Добавляем 3 элемента перед 6-ым элементом.
+  Writeln('Список после добавления 3-ёх элементов после n-го элемента:');
+  Afis(List, PElem);
+
+  //Добавляем 3 элемента перед n-ым элементом.
+  writeln('Introduceti element inainte- ', p);
   if PElemB <> nil then begin
-    for i := 1 to 3 do begin
+    for i := 1 to 3 do 
+    begin
       New(PElem);
-      PElem^.Data := i * -100;
+      read(PElem^.Data);
       InsB(List, PElemB, PElem);
     end;
   end;
- 
+  
   //Показываем весь список.
-  Writeln('Список после добавления 3-ёх элементов перед 6-ым элементом:');
-  PElem := List.PFirst;
-  i := 0;
-  while PElem <> nil do begin
-    Inc(i);
-    if i > 1 then Write(', ');
-    Write(PElem^.Data);
-    PElem := PElem^.PNext;
-  end;
-  Writeln;
- 
-  //Удаляем 8 и 3 элементы.
-  DelByNum(List, 8);
-  DelByNum(List, 3);
- 
+  Writeln('Список после добавления 3-ёх элементов перед n-ым элементом:');
+  Afis(List, PElem);
+  
+  //Удаляем 7 и 5 элементы.
+  DelByNum(List, 7);
+  DelByNum(List, 5);
+  
   //Показываем весь список.
-  Writeln('Список после удаления элементов с номерами 8 и 3:');
-  PElem := List.PFirst;
-  i := 0;
-  while PElem <> nil do begin
-    Inc(i);
-    if i > 1 then Write(', ');
-    Write(PElem^.Data);
-    PElem := PElem^.PNext;
-  end;
-  Writeln;
- 
+  Writeln('Список после удаления элементов с номерами 7 и 5:');
+  Afis(List, PElem);
   //Удаление списка из памяти.
   ListFree(List);
   Writeln('Список удалён из памяти. Программа завершена.');
- 
+  
   Readln;
 end.
